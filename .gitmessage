@@ -1,0 +1,14 @@
+<scope>: one-line summary of the change
+
+Why:
+Ref:
+
+Member: 1220XXXXXX Full Name
+
+# ---- CS340 rules ---------------------------------------------------
+# 1. The "Member:" line above is machine-checked by .git/hooks/commit-msg
+#    (install with: bash scripts/install-hooks.sh).
+# 2. One commit = one logical change. Whitespace-only commits do not count
+#    toward the weekly Sunday-23:59 check.
+# 3. Never commit build/, images, traces, or any file >50MB.
+# 4. Scopes in use: env, bench, scripts, docs, results, report.

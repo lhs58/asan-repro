@@ -1,0 +1,30 @@
+# Build outputs — never committed (course rule: no build artefacts)
+build/
+*.o
+*.d
+*.so
+*.a
+*.out
+
+# Python
+__pycache__/
+*.pyc
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Large or generated artefacts (course rule: nothing >50MB, no disk images/traces)
+*.img
+*.qcow2
+*.vdi
+*.tar
+*.tar.gz
+*.zip
+core
+core.*
+
+# NOTE: results/raw/*.csv is intentionally NOT ignored.
+# Those CSVs are the evidence trail behind every reported number.

@@ -1,0 +1,13 @@
+# Keep line endings stable across a Windows + Linux team.
+# CRLF in a shell script breaks inside the container with
+#   /bin/bash: bad interpreter: /bin/bash^M
+* text=auto eol=lf
+
+*.sh      text eol=lf
+Makefile  text eol=lf
+Dockerfile text eol=lf
+*.c       text eol=lf
+*.h       text eol=lf
+*.py      text eol=lf
+*.md      text eol=lf
+*.csv     text eol=lf

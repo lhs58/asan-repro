@@ -1,0 +1,30 @@
+# Deviations from the paper's setup
+
+The report requires a complete table of deviations, each with the original
+setting, the setting actually used, and the reason. This file is that table.
+**Update it as the project proceeds — a deviation discovered in week 5 still
+belongs here, and an empty "reason" column loses marks.**
+
+| ID | Item | Paper's setting | Ours | Reason |
+|---|---|---|---|---|
+| D1 | Starting code | The authors' ASan prototype inside LLVM 3.1, not separately published | Unmodified `clang-14` from the Ubuntu 22.04 archive | The 2012 prototype no longer exists as a separate artefact; ASan was upstreamed into LLVM. We therefore reproduce the *system under test*, not a fork of it. Nothing upstream is patched. |
+| D2 | Workloads | SPEC CPU2006, 18 benchmarks | 5 purpose-built C benchmarks (`b1`–`b5`) | SPEC CPU2006 is commercially licensed and retired; it cannot be obtained for a course project. Workloads are matched to the access patterns the paper singles out (malloc churn, 1–2-byte accesses, pointer chasing, FP). Reduced scale is permitted by the course instructions if stated. |
+| D3 | Compiler version | LLVM 3.1 (2012) | clang-14 (LLVM 14) | Building LLVM 3.1 on a current Linux distribution is fragile and out of scope. This is the single largest deviation: the instrumentation pass, the allocator and the runtime have all changed in 13 years, and C3 in `claims.md` depends on a pass option whose modern spelling must be verified. |
+| D4 | Heap redzone size | 32 bytes | `max_redzone=32` | Modern ASan computes redzones from allocation size, bounded by `max_redzone`; there is no literal "32-byte redzone" switch. `max_redzone=32` is the closest equivalent, not an exact match. |
+| D5 | Stack unwinding on malloc/free | Disabled for the performance runs | `malloc_context_size=0` | Same intent: remove call-stack capture from the measured path. |
+| D6 | Quarantine size | 0 | `quarantine_size_mb=0` | Matches the paper's performance configuration. Consequence: use-after-free detection is weakened, so the correctness check (`make doctor`) deliberately runs with default settings instead. |
+| D7 | LeakSanitizer | Did not exist in 2012 | Disabled during measurement (`detect_leaks=0`) | LSan runs at exit and adds cost the 2012 tool never paid. |
+| D8 | Hardware | HP Z600, 2 × quad-core Xeon E5620 @ 2.40 GHz, 24 GB RAM | FILL IN (see `docs/environment.md`) | Not available. Absolute times are not comparable; ratios are compared instead, and this is stated wherever numbers are quoted. |
+| D9 | OS / kernel | 64-bit Linux, 2012-era kernel | FILL IN (Ubuntu 22.04 container, kernel from host) | Container kernel is the host's. Record the exact kernel, since ASLR, THP and page-allocation behaviour affect VmPeak. |
+| D10 | Clock / statistics | Single run, no spread reported | Mean ± sample sd over ≥3 repetitions after one discarded warm-up | The course requires mean ± sd; the paper predates that norm. Our numbers are therefore more conservative, not less. |
+| D11 | CPU frequency behaviour | Not stated | FILL IN: governor, turbo/boost on or off, pinned core or not | 2010 servers ran at fixed clocks; laptop CPUs do not. This is the most likely cause of run-to-run noise. |
+| D12 | Write-only instrumentation | Internal pass option of the 2012 tool | `-mllvm -asan-instrument-reads=0` | Flag spelling differs between LLVM generations; verify it is accepted by clang-14, otherwise mark claim C3 untested. |
+| D13 | Memory metric | `VmPeak` from `/proc/self/status` | `VmHWM` (peak RSS) as primary; `VmPeak` recorded for comparison only | Current 64-bit ASan maps a 1/8-address-space shadow reservation as PROT_NONE. Untouched pages are never resident but still count toward VmPeak, so the paper's 3.37× cannot be reproduced on the same field. Report both and state the difference. |
+
+## Standing rules
+
+- Every deviation gets a row **when it happens**, not when the report is written.
+- If a deviation makes a claim untestable, say so in the report rather than
+  quietly dropping the claim.
+- Anything in this table that changes a number must also be mentioned in the
+  caption of the figure or table that reports that number.
