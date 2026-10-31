@@ -26,14 +26,34 @@ if [ -n "$PIN" ] && command -v taskset >/dev/null 2>&1; then
   pin="taskset -c $PIN"
 fi
 
-# iterations: tuned so a baseline run takes ~1 s on a modern laptop CPU.
+# Disable address-space randomisation for every measured process.
+#
+# Why: this WSL2 kernel exposes vm.mmap_rnd_bits=32, and with that much
+# entropy AddressSanitizer's fixed shadow mapping collides at random -- in a
+# 40-run trial 11 runs (27.5%) died with SIGSEGV before printing anything,
+# while the same binary reported the bug correctly the other 29 times. That
+# is measurement noise in its worst form: indistinguishable from a real
+# failure. `setarch -R` (ADDR_NO_RANDOMIZE) removes it deterministically and
+# per process, so it keeps working even after a VM restart resets the sysctl.
+# The baseline runs use the same wrapper, so baseline and instrumented builds
+# differ only in instrumentation. Recorded as deviation D14 in
+# docs/deviations.md.
+aslr=""
+if command -v setarch >/dev/null 2>&1; then
+  aslr="setarch $(uname -m) -R"
+fi
+
+# iterations: tuned on 2026-10-31 so that a *baseline* run takes roughly 0.5-1 s.
+# The first session used 7-20x smaller counts and every baseline finished in
+# 0.05-0.48 s, which left run-to-run noise at up to 24% of the mean (b4_float).
+# Short timings were the dominant source of variance, not the instrumentation.
 args_for() {
   case "$1" in
-    b1_allocs)  echo "8000000 4000" ;;
-    b2_pointer) echo "300000 1000" ;;
-    b3_int)     echo "1048576 500" ;;
-    b4_float)   echo "4096 20000" ;;
-    b5_string)  echo "4194304 40" ;;
+    b1_allocs)  echo "56000000 4000" ;;
+    b2_pointer) echo "300000 2000" ;;
+    b3_int)     echo "1048576 1100" ;;
+    b4_float)   echo "4096 400000" ;;
+    b5_string)  echo "4194304 220" ;;
     *)          echo "" ;;
   esac
 }
@@ -51,7 +71,7 @@ if [ "$WARMUP" = "1" ]; then
   for b in $BENCHES; do
     for m in $MODES; do
       # shellcheck disable=SC2086
-      $pin "build/$m/$b" "$m" $(args_for "$b") > /dev/null 2>&1 || true
+      $aslr $pin "build/$m/$b" "$m" $(args_for "$b") > /dev/null 2>&1 || true
     done
   done
 fi
@@ -60,7 +80,7 @@ for r in $(seq 1 "$RUNS"); do
   for b in $BENCHES; do
     for m in $MODES; do
       # shellcheck disable=SC2086
-      $pin "build/$m/$b" "$m" $(args_for "$b") >> "$OUT"
+      $aslr $pin "build/$m/$b" "$m" $(args_for "$b") >> "$OUT"
       printf '\r  run %s/%s  %-10s %-5s   ' "$r" "$RUNS" "$b" "$m" >&2
     done
   done

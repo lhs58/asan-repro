@@ -15,6 +15,14 @@ set -uo pipefail
 
 export ASAN_OPTIONS=detect_leaks=0
 CC="${CC:-clang-14}"
+
+# See scripts/run.sh: without ADDR_NO_RANDOMIZE, roughly a quarter of ASan runs
+# on this WSL2 kernel die with SIGSEGV before printing a report, which would
+# masquerade as "the bug was not detected".
+aslr=""
+if command -v setarch >/dev/null 2>&1; then
+  aslr="setarch $(uname -m) -R"
+fi
 OUT=build/bugs
 mkdir -p "$OUT"
 fail=0
@@ -30,7 +38,7 @@ run_case() {
     return
   fi
 
-  "$OUT/$name" > "$OUT/$name.log" 2>&1
+  $aslr "$OUT/$name" > "$OUT/$name.log" 2>&1
   rc=$?
   kind=$(grep -o 'ERROR: AddressSanitizer: [a-z-]*' "$OUT/$name.log" | head -n 1)
 
@@ -97,7 +105,7 @@ int main(void) {
 SRC
 if "$CC" -O2 -g -fsanitize=address -fno-omit-frame-pointer \
       -o "$OUT/clean_control" "$OUT/clean_control.c" 2>/dev/null; then
-  "$OUT/clean_control" > "$OUT/clean_control.log" 2>&1
+  $aslr "$OUT/clean_control" > "$OUT/clean_control.log" 2>&1
   if [ $? -eq 0 ]; then
     printf '  clean       %-22s no report (as expected)\n' clean_control
   else

@@ -7,7 +7,13 @@
 #   make all         build + run + summarize
 #   make clean
 
-CC          ?= clang-14
+# `CC ?= clang-14` would NOT work: GNU make defines CC as a built-in default
+# (origin "default"), and `?=` only assigns when the variable is undefined. So a
+# bare `make build` would silently use gcc, and the clang-only -mllvm flag in the
+# asanw build would fail. Override only the built-in default.
+ifeq ($(origin CC),default)
+CC          := clang-14
+endif
 OPT         ?= -O2
 BASE_FLAGS  ?= $(OPT) -g -Wall -Wextra -Wno-unused-parameter
 LDLIBS      ?= -lm
