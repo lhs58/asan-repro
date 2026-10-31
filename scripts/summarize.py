@@ -37,15 +37,39 @@ MODES = ["base", "asan", "asanw"]
 PAPER_SLOWDOWN_PCT = {"asan": 73.0, "asanw": 26.0}
 PAPER_MEM = 3.37
 ANALOGUE = {
-    "b1_allocs": "400.perlbench (2.60x)",
+    "b1_allocs": "400.perlbench (2.60x) *",
     "b2_pointer": "429.mcf",
     "b3_int": "401.bzip2",
-    "b4_float": "470.lbm",
+    "b4_float": "470.lbm *",
     "b5_string": "483.xalancbmk (2.67x)",
 }
 
+# One line per workload explaining what it does and does not measure. These go
+# into the summary so the number is never read in isolation.
+WORKLOAD_NOTE = {
+    "b1_allocs": (
+        "allocation-only loop: tiny malloc/free pairs with almost no other work. "
+        "It is an upper bound on allocator overhead, not a stand-in for perlbench, "
+        "which spends most of its time outside malloc. A large ratio here is "
+        "expected and is not evidence against the paper."
+    ),
+    "b2_pointer": (
+        "dependent-load chain over a heap linked list; isolates the extra shadow "
+        "load per dereference."
+    ),
+    "b3_int": "byte-at-a-time hashing; isolates 1-byte access instrumentation.",
+    "b4_float": (
+        "dense double-precision arrays. The measured ratio is dominated by "
+        "*de-vectorisation* (instrumented loops cannot be vectorised), not by "
+        "shadow checks, so it is not a clean test of the paper's claim that "
+        "floating-point code pays the least."
+    ),
+    "b5_string": "byte-wise token scan; the closest analogue to the paper's text-processing cases.",
+}
+
 # A VmPeak above this many kB (1 TB) means the shadow reservation is included.
-SHADOW_SUSPICION_KB = 1 << 40
+# 1 TB = 2^40 bytes = 2^30 kB.
+SHADOW_SUSPICION_KB = 1 << 30
 
 
 def load():
@@ -191,6 +215,13 @@ def main():
     else:
         out.append("> Checksums are identical across modes for every benchmark, "
                    "so the instrumented builds computed the same results.\n")
+
+    out.append("## What each workload does and does not measure\n")
+    for r in rows:
+        note = WORKLOAD_NOTE.get(r["bench"])
+        if note:
+            out.append(f"- **`{r['bench']}`** — {note}")
+    out.append("")
 
     with open(OUT_MD, "w", encoding="utf-8") as fh:
         fh.write("\n".join(out))

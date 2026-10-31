@@ -105,20 +105,35 @@ produces; values are filled in only after real runs.
 
 ### 6.1 Runtime overhead (paper: Figure 2, average 73 %)
 
+Session `results/raw/20261031-222633-LAPTOP-6KFUGPE5.csv`, n = 3 per point,
+warm-up discarded, baseline ≈ 0.5–1 s per run.
+
 | Benchmark | Baseline (s) | ASan (s) | Slowdown | Write-only (s) | Slowdown | Closest CPU2006 analogue |
 |---|---|---|---|---|---|---|
-| `b1_allocs` — heap churn | TBD | TBD | TBD | TBD | TBD | 400.perlbench (2.60×) |
-| `b2_pointer` — pointer chasing | TBD | TBD | TBD | TBD | TBD | 429.mcf |
-| `b3_int` — byte-wise hashing | TBD | TBD | TBD | TBD | TBD | 401.bzip2 |
-| `b4_float` — FP arrays | TBD | TBD | TBD | TBD | TBD | 470.lbm |
-| `b5_string` — token scanning | TBD | TBD | TBD | TBD | TBD | 483.xalancbmk (2.67×) |
-| **Mean** | | | **TBD** | | **TBD** | **paper: 1.73× / 1.26×** |
+| `b1_allocs` — heap churn | 0.528 ± 0.011 | 5.466 ± 0.231 | 10.36× | 5.459 ± 0.209 | 10.35× | 400.perlbench (2.60×) * |
+| `b2_pointer` — pointer chasing | 0.856 ± 0.132 | 1.117 ± 0.172 | 1.30× | 1.134 ± 0.271 | 1.32× | 429.mcf |
+| `b3_int` — byte-wise hashing | 0.948 ± 0.043 | 0.991 ± 0.042 | 1.05× | 0.950 ± 0.066 | 1.00× | 401.bzip2 |
+| `b4_float` — FP arrays | 0.768 ± 0.035 | 2.078 ± 0.078 | 2.70× | 1.010 ± 0.043 | 1.31× | 470.lbm * |
+| `b5_string` — token scanning | 1.009 ± 0.051 | 1.251 ± 0.039 | 1.24× | 0.985 ± 0.036 | 0.98× | 483.xalancbmk (2.67×) |
+| **Mean, all five** | | | **3.33× (+233 %)** | | **2.99× (+199 %)** | paper: 1.73× / 1.26× |
+| **Mean, b2–b5 only** | | | **1.57× (+57 %)** | | **1.15× (+15 %)** | paper: 1.73× / 1.26× |
+
+`*` Not a valid proxy — see the notes below. `b1_allocs` performs almost no work
+besides `malloc`/`free`, so its ratio is an **upper bound on allocator overhead**,
+not a replication of perlbench. `b4_float` is dominated by de-vectorisation
+rather than by shadow checks. Both means are reported so the reader can see how
+much the second one depends on that exclusion.
 
 ### 6.2 Memory overhead (paper: Table 1, average 3.37× — but see the caveat)
 
 | Benchmark | Baseline RSS (MB) | ASan RSS (MB) | Increase | ASan VmPeak (MB) |
 |---|---|---|---|---|
-| all five | TBD | TBD | TBD | TBD |
+| `b1_allocs` | 2.0 | 6.9 | 3.38× | 20 971 560 |
+| `b2_pointer` | 10.9 | 20.1 | 1.84× | 20 971 560 |
+| `b3_int` | 2.8 | 5.7 | 2.04× | 20 971 561 |
+| `b4_float` | 1.9 | 4.8 | 2.48× | 20 971 560 |
+| `b5_string` | 5.8 | 8.7 | 1.50× | 20 971 564 |
+| **Mean** | | | **2.25×** (paper: 3.37×) | — |
 
 The paper's 3.37× is a `VmPeak` measurement from 2012. Current ASan reserves
 1/8 of the address space as shadow, so `VmPeak` is dominated by an unused
