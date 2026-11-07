@@ -114,7 +114,9 @@ The dashed lines mark the paper's 1.73× (all accesses) and 1.26× (write-only) 
 ![Peak memory increase per benchmark](results/figures/memory.svg)
 
 **Fig. 2** — peak-RSS increase per workload. The dashed line is the paper's 3.37× VmPeak
-figure, drawn for orientation only (see 6.2): it is a different metric.
+figure, drawn for orientation only (see 6.2): it is a different metric. Peak RSS varies by
+at most 0.33 % between runs, so the error bars are present but barely visible — memory is
+almost deterministic here, unlike time.
 
 ### 6.1 Runtime overhead (paper: Figure 2, average 73 %)
 

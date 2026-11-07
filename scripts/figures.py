@@ -230,6 +230,18 @@ def _f(row: dict[str, str], key: str) -> float:
         sys.exit(f"figures: summary.csv is missing a numeric column {key!r}")
 
 
+def _f_opt(row: dict[str, str], key: str) -> float | None:
+    """Like _f, but returns None when the column is absent.
+
+    summary.csv from an older session has no RSS spread; the memory figure then
+    falls back to bars without whiskers instead of refusing to draw.
+    """
+    try:
+        return float(row[key])
+    except (KeyError, ValueError):
+        return None
+
+
 def ratio_sd(mean_a: float, sd_a: float, mean_b: float, sd_b: float) -> float:
     """First-order standard deviation of mean_a / mean_b."""
     if mean_a <= 0 or mean_b <= 0:
@@ -304,13 +316,15 @@ def plot(rows: list[dict[str, str]],
             right = x0 + length
             if sd_col:
                 sd = _f(row, sd_col)
-                lo, hi = max(0.0, v - sd), v + sd
-                mx = x0 + (v / vmax) * plot_w
-                canvas.line(mx, by + 1, mx, by + bar_h - 1, C_ERR, 1.0)
-                for cap in (lo, hi):
-                    cx = x0 + (cap / vmax) * plot_w
-                    canvas.line(cx, by + bar_h / 2 - 4, cx, by + bar_h / 2 + 4, C_ERR, 1.0)
-                right = max(right, x0 + (hi / vmax) * plot_w)
+                if sd > 0:
+                    lo, hi = max(0.0, v - sd), v + sd
+                    mx = x0 + (v / vmax) * plot_w
+                    canvas.line(mx, by + 1, mx, by + bar_h - 1, C_ERR, 1.0)
+                    for cap in (lo, hi):
+                        cx = x0 + (cap / vmax) * plot_w
+                        canvas.line(cx, by + bar_h / 2 - 4, cx, by + bar_h / 2 + 4,
+                                    C_ERR, 1.0)
+                    right = max(right, x0 + (hi / vmax) * plot_w)
             canvas.text(right + 8, by + bar_h / 2 + 3.5, f"{v:.2f}\u00d7", 10.5, C_TEXT)
 
     entries = [(colour, label, False) for _c, _s, colour, label in series]
@@ -343,6 +357,31 @@ def main() -> None:
         row["slowdown_write_only_sd"] = str(
             ratio_sd(_f(row, "asanw_s"), _f(row, "asanw_sd"), base, _f(row, "base_sd"))
         )
+        # Fig. 2 plots a ratio, so its whiskers need the propagated standard
+        # deviation of that ratio, not the raw kB spread.
+        base_rss_sd = _f_opt(row, "base_rss_sd")
+        asan_rss_sd = _f_opt(row, "asan_rss_sd")
+        if base_rss_sd is not None and asan_rss_sd is not None:
+            row["rss_increase_sd"] = str(
+                ratio_sd(_f(row, "asan_rss_kb"), asan_rss_sd,
+                         _f(row, "base_rss_kb"), base_rss_sd)
+            )
+
+    rss_sd_col = "rss_increase_sd" if all("rss_increase_sd" in r for r in rows) else ""
+    if rss_sd_col:
+        rel = [_f(r, "rss_increase_sd") / _f(r, "rss_increase")
+               for r in rows if _f(r, "rss_increase")]
+        rss_rel_max = max(rel) if rel else 0.0
+    else:
+        rss_rel_max = 0.0
+
+    if not rss_sd_col:
+        rss_note = ""
+    elif rss_rel_max < 0.02:
+        rss_note = (f" Peak RSS varies by at most {rss_rel_max * 100:.2f} % between "
+                    "runs, so the whiskers are barely visible.")
+    else:
+        rss_note = " Whiskers are the propagated standard deviation."
 
     figures = [
         (
@@ -366,11 +405,12 @@ def main() -> None:
         (
             plot(
                 rows,
-                [("rss_increase", "", C_ASAN, "peak RSS increase")],
+                [("rss_increase", rss_sd_col, C_ASAN, "peak RSS increase")],
                 [(PAPER_MEM, f"paper {PAPER_MEM:.2f}\u00d7 (VmPeak)")],
                 "Peak memory increase over the baseline",
                 "VmHWM (peak resident set) read from /proc/self/status; the paper's "
-                "3.37\u00d7 is a VmPeak figure and is shown for orientation only.",
+                "3.37\u00d7 is a VmPeak figure and is shown for orientation only."
+                + rss_note,
                 "increase (x baseline)",
             ),
             "memory",

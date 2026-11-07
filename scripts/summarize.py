@@ -105,6 +105,16 @@ def fmt(m, sd, unit=""):
     return f"{m:.3f} ± {sd:.3f}{unit}"
 
 
+def cell_mb(mean_kb, sd_kb):
+    """Memory cell in MB, showing ± sd only when the spread is not zero.
+
+    Peak RSS is bit-identical across repetitions here, so printing "± 0.0"
+    five times would be noise; the zero spread is stated in the prose instead.
+    """
+    m, s = mean_kb / 1024.0, sd_kb / 1024.0
+    return f"{m:.1f}" if s < 0.05 else f"{m:.1f} ± {s:.1f}"
+
+
 def ratio(a, b):
     try:
         return a / b if b else float("nan")
@@ -123,8 +133,8 @@ def main():
         base_m, base_s = mean_sd(data[(b, "base")]["wall"])
         asan_m, asan_s = mean_sd(data[(b, "asan")]["wall"])
         asanw_m, asanw_s = mean_sd(data[(b, "asanw")]["wall"])
-        base_rss, _ = mean_sd(data[(b, "base")]["rss"])
-        asan_rss, _ = mean_sd(data[(b, "asan")]["rss"])
+        base_rss, base_rss_sd = mean_sd(data[(b, "base")]["rss"])
+        asan_rss, asan_rss_sd = mean_sd(data[(b, "asan")]["rss"])
         base_peak, _ = mean_sd(data[(b, "base")]["peak"])
         asan_peak, _ = mean_sd(data[(b, "asan")]["peak"])
 
@@ -135,6 +145,7 @@ def main():
             base=(base_m, base_s), asan=(asan_m, asan_s), asanw=(asanw_m, asanw_s),
             ratio=ratio(asan_m, base_m), ratio_w=ratio(asanw_m, base_m),
             base_rss=base_rss, asan_rss=asan_rss, rss_ratio=ratio(asan_rss, base_rss),
+            base_rss_sd=base_rss_sd, asan_rss_sd=asan_rss_sd,
             base_peak=base_peak, asan_peak=asan_peak, peak_ratio=ratio(asan_peak, base_peak),
             checksums=sums,
         ))
@@ -147,7 +158,8 @@ def main():
         w = csv.writer(fh)
         w.writerow(["bench", "n", "base_s", "base_sd", "asan_s", "asan_sd",
                     "asanw_s", "asanw_sd", "slowdown", "slowdown_write_only",
-                    "base_rss_kb", "asan_rss_kb", "rss_increase",
+                    "base_rss_kb", "base_rss_sd", "asan_rss_kb", "asan_rss_sd",
+                    "rss_increase",
                     "base_vmpeak_kb", "asan_vmpeak_kb", "vmpeak_increase"])
         for r in rows:
             w.writerow([
@@ -156,7 +168,8 @@ def main():
                 f"{r['asan'][0]:.6f}", f"{r['asan'][1]:.6f}",
                 f"{r['asanw'][0]:.6f}", f"{r['asanw'][1]:.6f}",
                 f"{r['ratio']:.4f}", f"{r['ratio_w']:.4f}",
-                f"{r['base_rss']:.1f}", f"{r['asan_rss']:.1f}", f"{r['rss_ratio']:.4f}",
+                f"{r['base_rss']:.1f}", f"{r['base_rss_sd']:.1f}",
+                f"{r['asan_rss']:.1f}", f"{r['asan_rss_sd']:.1f}", f"{r['rss_ratio']:.4f}",
                 f"{r['base_peak']:.1f}", f"{r['asan_peak']:.1f}", f"{r['peak_ratio']:.4f}",
             ])
 
@@ -187,8 +200,9 @@ def main():
                "Baseline VmPeak (MB) | ASan VmPeak (MB) |")
     out.append("|---|---|---|---|---|---|")
     for r in rows:
-        out.append(f"| `{r['bench']}` | {r['base_rss'] / 1024:.1f} | "
-                   f"{r['asan_rss'] / 1024:.1f} | {r['rss_ratio']:.2f}× | "
+        out.append(f"| `{r['bench']}` | {cell_mb(r['base_rss'], r['base_rss_sd'])} | "
+                   f"{cell_mb(r['asan_rss'], r['asan_rss_sd'])} | "
+                   f"{r['rss_ratio']:.2f}× | "
                    f"{r['base_peak'] / 1024:.1f} | {r['asan_peak'] / 1024:.1f} |")
     out.append(f"| **Mean** | | | **{avg('rss_ratio'):.2f}×** "
                f"(paper: {PAPER_MEM:.2f}×) | | |")
@@ -215,6 +229,15 @@ def main():
     else:
         out.append("> Checksums are identical across modes for every benchmark, "
                    "so the instrumented builds computed the same results.\n")
+
+    rss_rel = [r["asan_rss_sd"] / r["asan_rss"] for r in rows if r["asan_rss"]]
+    max_rel = max(rss_rel) if rss_rel else 0.0
+    if max_rel < 0.02:
+        out.append(f"> Peak RSS varies by at most {max_rel * 100:.2f} % between "
+                   "repetitions, so the error bars in the memory figure are not "
+                   "visible: the allocation pattern, and therefore the high-water "
+                   "mark, is almost deterministic. The meaningful run-to-run spread "
+                   "is in the timings (runtime figure).\n")
 
     out.append("## What each workload does and does not measure\n")
     for r in rows:

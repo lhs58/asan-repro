@@ -10,12 +10,12 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 920 470] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
 endobj
 4 0 obj
-<< /Length 2873 >>
+<< /Length 3388 >>
 stream
 1.0000 1.0000 1.0000 rg
 0.00 0.00 920.00 470.00 re f
 BT /F2 16.00 Tf 1 0 0 1 118.00 442.00 Tm 0.1216 0.1216 0.1216 rg (Peak memory increase over the baseline) Tj ET
-BT /F1 12.00 Tf 1 0 0 1 118.00 422.00 Tm 0.4353 0.4353 0.4353 rg (VmHWM \(peak resident set\) read from /proc/self/status; the paper's 3.37\327 is a VmPeak figure and is shown for orientation only.) Tj ET
+BT /F1 12.00 Tf 1 0 0 1 118.00 422.00 Tm 0.4353 0.4353 0.4353 rg (VmHWM \(peak resident set\) read from /proc/self/status; the paper's 3.37\327 is a VmPeak figure and is shown for orientation only. Peak RSS varies by at most 0.33 % between runs, so the whiskers are barely visible.) Tj ET
 0.2392 0.2392 0.2392 RG
 1.00 w
 [] 0 d
@@ -53,7 +53,19 @@ BT /F1 12.00 Tf 1 0 0 1 450.65 26.00 Tm 0.1216 0.1216 0.1216 rg (increase \(x ba
 BT /F1 12.00 Tf 1 0 0 1 57.31 370.60 Tm 0.1216 0.1216 0.1216 rg (b1_allocs) Tj ET
 0.1843 0.4275 0.7098 rg
 118.00 364.10 655.62 21.00 re f
-BT /F1 10.50 Tf 1 0 0 1 781.62 371.10 Tm 0.1216 0.1216 0.1216 rg (3.38\327) Tj ET
+0.1686 0.1686 0.1686 RG
+1.00 w
+[] 0 d
+773.62 384.10 m 773.62 365.10 l S
+0.1686 0.1686 0.1686 RG
+1.00 w
+[] 0 d
+771.47 378.60 m 771.47 370.60 l S
+0.1686 0.1686 0.1686 RG
+1.00 w
+[] 0 d
+775.78 378.60 m 775.78 370.60 l S
+BT /F1 10.50 Tf 1 0 0 1 783.78 371.10 Tm 0.1216 0.1216 0.1216 rg (3.38\327) Tj ET
 BT /F1 12.00 Tf 1 0 0 1 51.30 303.80 Tm 0.1216 0.1216 0.1216 rg (b2_pointer) Tj ET
 0.1843 0.4275 0.7098 rg
 118.00 297.30 356.71 21.00 re f
@@ -69,7 +81,19 @@ BT /F1 10.50 Tf 1 0 0 1 607.84 170.70 Tm 0.1216 0.1216 0.1216 rg (2.48\327) Tj E
 BT /F1 12.00 Tf 1 0 0 1 58.64 103.40 Tm 0.1216 0.1216 0.1216 rg (b5_string) Tj ET
 0.1843 0.4275 0.7098 rg
 118.00 96.90 291.64 21.00 re f
-BT /F1 10.50 Tf 1 0 0 1 417.64 103.90 Tm 0.1216 0.1216 0.1216 rg (1.50\327) Tj ET
+0.1686 0.1686 0.1686 RG
+1.00 w
+[] 0 d
+409.64 116.90 m 409.64 97.90 l S
+0.1686 0.1686 0.1686 RG
+1.00 w
+[] 0 d
+408.88 111.40 m 408.88 103.40 l S
+0.1686 0.1686 0.1686 RG
+1.00 w
+[] 0 d
+410.40 111.40 m 410.40 103.40 l S
+BT /F1 10.50 Tf 1 0 0 1 418.40 103.90 Tm 0.1216 0.1216 0.1216 rg (1.50\327) Tj ET
 1.0000 1.0000 1.0000 rg
 616.88 80.00 277.12 24.00 re f
 0.9059 0.9059 0.9059 RG
@@ -102,11 +126,11 @@ xref
 0000000064 00000 n 
 0000000121 00000 n 
 0000000257 00000 n 
-0000003181 00000 n 
-0000003278 00000 n 
-0000003380 00000 n 
+0000003696 00000 n 
+0000003793 00000 n 
+0000003895 00000 n 
 trailer
 << /Size 8 /Root 1 0 R /Info 7 0 R >>
 startxref
-3500
+4015
 %%EOF
