@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="470" viewBox="0 0 920 470" role="img" aria-label="Runtime overhead of AddressSanitizer on five workloads">
+<rect width="920" height="470" fill="#ffffff"/>
+<rect x="0.0" y="0.0" width="920.0" height="470.0" fill="#ffffff"/>
+<text x="118.0" y="28.0" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#1f1f1f" text-anchor="start" font-weight="bold">Runtime overhead vs. clang -O2 baseline</text>
+<text x="118.0" y="48.0" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#6f6f6f" text-anchor="start">Five workloads, n = 3 runs after one discarded warm-up; bars are mean slowdown, whiskers the propagated standard deviation.</text>
+<line x1="118.0" y1="62.0" x2="118.0" y2="396.0" stroke="#3d3d3d" stroke-width="1.0"/>
+<text x="118.0" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6f6f6f" text-anchor="middle">0</text>
+<line x1="273.2" y1="62.0" x2="273.2" y2="396.0" stroke="#e7e7e7" stroke-width="1.0"/>
+<text x="273.2" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6f6f6f" text-anchor="middle">2.5</text>
+<line x1="428.4" y1="62.0" x2="428.4" y2="396.0" stroke="#e7e7e7" stroke-width="1.0"/>
+<text x="428.4" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6f6f6f" text-anchor="middle">5</text>
+<line x1="583.6" y1="62.0" x2="583.6" y2="396.0" stroke="#e7e7e7" stroke-width="1.0"/>
+<text x="583.6" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6f6f6f" text-anchor="middle">7.5</text>
+<line x1="738.8" y1="62.0" x2="738.8" y2="396.0" stroke="#e7e7e7" stroke-width="1.0"/>
+<text x="738.8" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6f6f6f" text-anchor="middle">10</text>
+<line x1="894.0" y1="62.0" x2="894.0" y2="396.0" stroke="#e7e7e7" stroke-width="1.0"/>
+<text x="894.0" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6f6f6f" text-anchor="middle">12.5</text>
+<line x1="118.0" y1="396.0" x2="894.0" y2="396.0" stroke="#3d3d3d" stroke-width="1.0"/>
+<text x="506.0" y="444.0" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="middle">slowdown (x baseline)</text>
+<line x1="225.4" y1="62.0" x2="225.4" y2="396.0" stroke="#8c8c8c" stroke-width="1.2" stroke-dasharray="6 4"/>
+<line x1="196.2" y1="62.0" x2="196.2" y2="396.0" stroke="#8c8c8c" stroke-width="1.2" stroke-dasharray="6 4"/>
+<text x="108.0" y="99.4" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="end">b1_allocs</text>
+<rect x="118.0" y="72.9" width="643.0" height="21.0" fill="#2f6db5" rx="1.5"/>
+<line x1="761.0" y1="73.9" x2="761.0" y2="92.9" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="730.6" y1="79.4" x2="730.6" y2="87.4" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="791.5" y1="79.4" x2="791.5" y2="87.4" stroke="#2b2b2b" stroke-width="1.0"/>
+<text x="799.5" y="86.9" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">10.36×</text>
+<rect x="118.0" y="96.9" width="642.2" height="21.0" fill="#d9822b" rx="1.5"/>
+<line x1="760.2" y1="97.9" x2="760.2" y2="116.9" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="732.0" y1="103.4" x2="732.0" y2="111.4" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="788.4" y1="103.4" x2="788.4" y2="111.4" stroke="#2b2b2b" stroke-width="1.0"/>
+<text x="796.4" y="110.9" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">10.35×</text>
+<text x="108.0" y="166.2" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="end">b2_pointer</text>
+<rect x="118.0" y="139.7" width="81.0" height="21.0" fill="#2f6db5" rx="1.5"/>
+<line x1="199.0" y1="140.7" x2="199.0" y2="159.7" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="181.3" y1="146.2" x2="181.3" y2="154.2" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="216.7" y1="146.2" x2="216.7" y2="154.2" stroke="#2b2b2b" stroke-width="1.0"/>
+<text x="224.7" y="153.7" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">1.30×</text>
+<rect x="118.0" y="163.7" width="82.3" height="21.0" fill="#d9822b" rx="1.5"/>
+<line x1="200.3" y1="164.7" x2="200.3" y2="183.7" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="176.9" y1="170.2" x2="176.9" y2="178.2" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="223.6" y1="170.2" x2="223.6" y2="178.2" stroke="#2b2b2b" stroke-width="1.0"/>
+<text x="231.6" y="177.7" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">1.32×</text>
+<text x="108.0" y="233.0" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="end">b3_int</text>
+<rect x="118.0" y="206.5" width="64.9" height="21.0" fill="#2f6db5" rx="1.5"/>
+<line x1="182.9" y1="207.5" x2="182.9" y2="226.5" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="178.9" y1="213.0" x2="178.9" y2="221.0" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="186.9" y1="213.0" x2="186.9" y2="221.0" stroke="#2b2b2b" stroke-width="1.0"/>
+<text x="194.9" y="220.5" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">1.05×</text>
+<rect x="118.0" y="230.5" width="62.2" height="21.0" fill="#d9822b" rx="1.5"/>
+<line x1="180.2" y1="231.5" x2="180.2" y2="250.5" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="175.0" y1="237.0" x2="175.0" y2="245.0" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="185.4" y1="237.0" x2="185.4" y2="245.0" stroke="#2b2b2b" stroke-width="1.0"/>
+<text x="193.4" y="244.5" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">1.00×</text>
+<text x="108.0" y="299.8" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="end">b4_float</text>
+<rect x="118.0" y="273.3" width="167.8" height="21.0" fill="#2f6db5" rx="1.5"/>
+<line x1="285.8" y1="274.3" x2="285.8" y2="293.3" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="275.9" y1="279.8" x2="275.9" y2="287.8" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="295.7" y1="279.8" x2="295.7" y2="287.8" stroke="#2b2b2b" stroke-width="1.0"/>
+<text x="303.7" y="287.3" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">2.70×</text>
+<rect x="118.0" y="297.3" width="81.6" height="21.0" fill="#d9822b" rx="1.5"/>
+<line x1="199.6" y1="298.3" x2="199.6" y2="317.3" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="194.5" y1="303.8" x2="194.5" y2="311.8" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="204.7" y1="303.8" x2="204.7" y2="311.8" stroke="#2b2b2b" stroke-width="1.0"/>
+<text x="212.7" y="311.3" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">1.31×</text>
+<text x="108.0" y="366.6" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="end">b5_string</text>
+<rect x="118.0" y="340.1" width="77.0" height="21.0" fill="#2f6db5" rx="1.5"/>
+<line x1="195.0" y1="341.1" x2="195.0" y2="360.1" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="190.4" y1="346.6" x2="190.4" y2="354.6" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="199.5" y1="346.6" x2="199.5" y2="354.6" stroke="#2b2b2b" stroke-width="1.0"/>
+<text x="207.5" y="354.1" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">1.24×</text>
+<rect x="118.0" y="364.1" width="60.6" height="21.0" fill="#d9822b" rx="1.5"/>
+<line x1="178.6" y1="365.1" x2="178.6" y2="384.1" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="174.8" y1="370.6" x2="174.8" y2="378.6" stroke="#2b2b2b" stroke-width="1.0"/>
+<line x1="182.4" y1="370.6" x2="182.4" y2="378.6" stroke="#2b2b2b" stroke-width="1.0"/>
+<text x="190.4" y="378.1" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">0.98×</text>
+<rect x="500.0" y="366.0" width="394.0" height="24.0" fill="#ffffff"/>
+<line x1="500.0" y1="366.0" x2="894.0" y2="366.0" stroke="#e7e7e7" stroke-width="1.0"/>
+<rect x="508.0" y="373.0" width="12.0" height="10.0" fill="#2f6db5" rx="1.0"/>
+<text x="526.0" y="382.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#1f1f1f" text-anchor="start">ASan, all accesses</text>
+<rect x="632.9" y="373.0" width="12.0" height="10.0" fill="#d9822b" rx="1.0"/>
+<text x="650.9" y="382.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#1f1f1f" text-anchor="start">write-only</text>
+<line x1="712.0" y1="378.0" x2="724.0" y2="378.0" stroke="#8c8c8c" stroke-width="1.2" stroke-dasharray="6 4"/>
+<text x="730.0" y="382.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#1f1f1f" text-anchor="start">paper 1.73×</text>
+<line x1="803.0" y1="378.0" x2="815.0" y2="378.0" stroke="#8c8c8c" stroke-width="1.2" stroke-dasharray="6 4"/>
+<text x="821.0" y="382.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#1f1f1f" text-anchor="start">paper 1.26×</text>
+</svg>

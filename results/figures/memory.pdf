@@ -1,0 +1,112 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 920 470] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 2873 >>
+stream
+1.0000 1.0000 1.0000 rg
+0.00 0.00 920.00 470.00 re f
+BT /F2 16.00 Tf 1 0 0 1 118.00 442.00 Tm 0.1216 0.1216 0.1216 rg (Peak memory increase over the baseline) Tj ET
+BT /F1 12.00 Tf 1 0 0 1 118.00 422.00 Tm 0.4353 0.4353 0.4353 rg (VmHWM \(peak resident set\) read from /proc/self/status; the paper's 3.37\327 is a VmPeak figure and is shown for orientation only.) Tj ET
+0.2392 0.2392 0.2392 RG
+1.00 w
+[] 0 d
+118.00 408.00 m 118.00 74.00 l S
+BT /F1 11.00 Tf 1 0 0 1 114.94 54.00 Tm 0.4353 0.4353 0.4353 rg (0) Tj ET
+0.9059 0.9059 0.9059 RG
+1.00 w
+[] 0 d
+312.00 408.00 m 312.00 74.00 l S
+BT /F1 11.00 Tf 1 0 0 1 308.94 54.00 Tm 0.4353 0.4353 0.4353 rg (1) Tj ET
+0.9059 0.9059 0.9059 RG
+1.00 w
+[] 0 d
+506.00 408.00 m 506.00 74.00 l S
+BT /F1 11.00 Tf 1 0 0 1 502.94 54.00 Tm 0.4353 0.4353 0.4353 rg (2) Tj ET
+0.9059 0.9059 0.9059 RG
+1.00 w
+[] 0 d
+700.00 408.00 m 700.00 74.00 l S
+BT /F1 11.00 Tf 1 0 0 1 696.94 54.00 Tm 0.4353 0.4353 0.4353 rg (3) Tj ET
+0.9059 0.9059 0.9059 RG
+1.00 w
+[] 0 d
+894.00 408.00 m 894.00 74.00 l S
+BT /F1 11.00 Tf 1 0 0 1 890.94 54.00 Tm 0.4353 0.4353 0.4353 rg (4) Tj ET
+0.2392 0.2392 0.2392 RG
+1.00 w
+[] 0 d
+118.00 74.00 m 894.00 74.00 l S
+BT /F1 12.00 Tf 1 0 0 1 450.65 26.00 Tm 0.1216 0.1216 0.1216 rg (increase \(x baseline\)) Tj ET
+0.5490 0.5490 0.5490 RG
+1.20 w
+[6 4] 0 d
+771.78 408.00 m 771.78 74.00 l S
+BT /F1 12.00 Tf 1 0 0 1 57.31 370.60 Tm 0.1216 0.1216 0.1216 rg (b1_allocs) Tj ET
+0.1843 0.4275 0.7098 rg
+118.00 364.10 655.62 21.00 re f
+BT /F1 10.50 Tf 1 0 0 1 781.62 371.10 Tm 0.1216 0.1216 0.1216 rg (3.38\327) Tj ET
+BT /F1 12.00 Tf 1 0 0 1 51.30 303.80 Tm 0.1216 0.1216 0.1216 rg (b2_pointer) Tj ET
+0.1843 0.4275 0.7098 rg
+118.00 297.30 356.71 21.00 re f
+BT /F1 10.50 Tf 1 0 0 1 482.71 304.30 Tm 0.1216 0.1216 0.1216 rg (1.84\327) Tj ET
+BT /F1 12.00 Tf 1 0 0 1 75.31 237.00 Tm 0.1216 0.1216 0.1216 rg (b3_int) Tj ET
+0.1843 0.4275 0.7098 rg
+118.00 230.50 396.48 21.00 re f
+BT /F1 10.50 Tf 1 0 0 1 522.48 237.50 Tm 0.1216 0.1216 0.1216 rg (2.04\327) Tj ET
+BT /F1 12.00 Tf 1 0 0 1 65.30 170.20 Tm 0.1216 0.1216 0.1216 rg (b4_float) Tj ET
+0.1843 0.4275 0.7098 rg
+118.00 163.70 481.84 21.00 re f
+BT /F1 10.50 Tf 1 0 0 1 607.84 170.70 Tm 0.1216 0.1216 0.1216 rg (2.48\327) Tj ET
+BT /F1 12.00 Tf 1 0 0 1 58.64 103.40 Tm 0.1216 0.1216 0.1216 rg (b5_string) Tj ET
+0.1843 0.4275 0.7098 rg
+118.00 96.90 291.64 21.00 re f
+BT /F1 10.50 Tf 1 0 0 1 417.64 103.90 Tm 0.1216 0.1216 0.1216 rg (1.50\327) Tj ET
+1.0000 1.0000 1.0000 rg
+616.88 80.00 277.12 24.00 re f
+0.9059 0.9059 0.9059 RG
+1.00 w
+[] 0 d
+616.88 104.00 m 894.00 104.00 l S
+0.1843 0.4275 0.7098 rg
+624.88 87.00 12.00 10.00 re f
+BT /F1 11.00 Tf 1 0 0 1 642.88 88.00 Tm 0.1216 0.1216 0.1216 rg (peak RSS increase) Tj ET
+0.5490 0.5490 0.5490 RG
+1.20 w
+[6 4] 0 d
+751.03 92.00 m 763.03 92.00 l S
+BT /F1 11.00 Tf 1 0 0 1 769.03 88.00 Tm 0.1216 0.1216 0.1216 rg (paper 3.37\327 \(VmPeak\)) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Title (Peak memory increase of AddressSanitizer on five workloads) /Producer (scripts/figures.py) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000257 00000 n 
+0000003181 00000 n 
+0000003278 00000 n 
+0000003380 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+3500
+%%EOF

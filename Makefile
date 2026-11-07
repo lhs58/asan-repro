@@ -3,8 +3,9 @@
 #   make build       build 5 benchmarks x 3 modes into build/{base,asan,asanw}/
 #   make run         1 warm-up + RUNS measured repetitions -> results/raw/*.csv
 #   make summarize   aggregate raw CSV -> results/summary.md
+#   make figures     summary.csv -> results/figures/*.svg and *.pdf
 #   make env         record toolchain/OS/CPU -> docs/environment.md
-#   make all         build + run + summarize
+#   make all         build + run + summarize + figures
 #   make clean
 
 # `CC ?= clang-14` would NOT work: GNU make defines CC as a built-in default
@@ -32,9 +33,9 @@ RUNS      ?= 3
 ASAN_FLAGS  := -fsanitize=address -fno-omit-frame-pointer -g
 ASANW_FLAGS := $(ASAN_FLAGS) -mllvm -asan-instrument-reads=0
 
-.PHONY: all build run summarize env clean shell doctor
+.PHONY: all build run summarize figures env clean shell doctor
 
-all: build run summarize
+all: build run summarize figures
 
 build:
 	@mkdir -p $(BUILD)/base $(BUILD)/asan $(BUILD)/asanw
@@ -50,6 +51,9 @@ run: build
 
 summarize:
 	@python3 scripts/summarize.py
+
+figures:
+	@python3 scripts/figures.py
 
 env:
 	@bash scripts/env.sh > docs/environment.md

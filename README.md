@@ -8,7 +8,7 @@ CS340 Operating Systems — Research Paper Replication, AY 2026–27.
 | **Paper PDF** | https://www.usenix.org/system/files/conference/atc12/atc12-final39.pdf |
 | **System under test** | AddressSanitizer as shipped with LLVM/Clang (we use the packaged `clang-14` from Ubuntu 22.04). No upstream file is patched. |
 | **Our artefact** | The benchmark harness and measurement pipeline in this repository. |
-| **Repository status** | Week 1 scaffold — see `docs/plan.md` for the six-week schedule. |
+| **Repository status** | Week 3 — full 5 × 3 session at n = 3, summary tables and the first two figures; see `docs/plan.md`. |
 
 ---
 
@@ -37,8 +37,9 @@ docker build -t asan-repro .
 docker run --rm -it -v "${PWD}:/work" asan-repro make all
 ```
 
-`make all` = `make build` + `make run` + `make summarize`. It writes
-`results/raw/<timestamp>-<host>.csv` and `results/summary.md`.
+`make all` = `make build` + `make run` + `make summarize` + `make figures`. It writes
+`results/raw/<timestamp>-<host>.csv`, `results/summary.md` and the two figures in
+`results/figures/`.
 
 ## 3. Starting code and what we pin
 
@@ -93,15 +94,27 @@ reflecting real memory use. `vmpeak_kb` is recorded so the effect can be shown
 and explained, not so it can be compared to Table 1 directly. See the comment
 block at the top of `bench/common.h`.
 
-**Expected runtime** on a typical 8-core laptop CPU, containerised:
-about 15 s per benchmark per mode per repetition — roughly **8–10 minutes** for
-`RUNS=3` including the warm-up. Record the number you actually observe here.
+**Observed runtime.** The committed session (`results/raw/20261031-222633-LAPTOP-6KFUGPE5.csv`,
+45 measured runs) sums to 73.6 s of process time; adding the discarded warm-up pass
+gives ≈100 s, and compiling the 15 binaries adds the rest — `make all` takes about
+two minutes here, with the measurement dominating.
 
 ## 6. Results
 
 `make summarize` produces [`results/summary.md`](results/summary.md) with mean ± standard
-deviation over repetitions and the Paper-vs-Ours comparison. The table below is the shape it
-produces; values are filled in only after real runs.
+deviation over repetitions and the Paper-vs-Ours comparison; `make figures` renders the same
+data as vector figures. Everything below comes from the committed session
+`results/raw/20261031-222633-LAPTOP-6KFUGPE5.csv` (n = 3 per point), not from placeholders.
+
+![Runtime overhead per benchmark](results/figures/slowdown.svg)
+
+**Fig. 1** — mean slowdown per workload; whiskers are the propagated standard deviation.
+The dashed lines mark the paper's 1.73× (all accesses) and 1.26× (write-only) averages.
+
+![Peak memory increase per benchmark](results/figures/memory.svg)
+
+**Fig. 2** — peak-RSS increase per workload. The dashed line is the paper's 3.37× VmPeak
+figure, drawn for orientation only (see 6.2): it is a different metric.
 
 ### 6.1 Runtime overhead (paper: Figure 2, average 73 %)
 
@@ -155,11 +168,11 @@ discrepancy analysis, not a defect to hide.
 
 ```
 bench/        five C benchmarks + shared timing/measurement header
-scripts/      build/run/summarize/env helpers, commit-msg hook installer
+scripts/      build/run/summarize/figures/env helpers, commit-msg hook installer
 docs/         claims, deviations, environment record, six-week plan
-results/      raw per-run CSV (committed — this is the evidence trail) + summary
+results/      raw per-run CSV (committed — the evidence trail), summary, figures
 Dockerfile    pinned toolchain
-Makefile      build / run / summarize / env / clean
+Makefile      build / run / summarize / figures / env / clean
 ```
 
 ## 8. Credit and licence

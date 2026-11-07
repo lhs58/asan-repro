@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="470" viewBox="0 0 920 470" role="img" aria-label="Peak memory increase of AddressSanitizer on five workloads">
+<rect width="920" height="470" fill="#ffffff"/>
+<rect x="0.0" y="0.0" width="920.0" height="470.0" fill="#ffffff"/>
+<text x="118.0" y="28.0" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#1f1f1f" text-anchor="start" font-weight="bold">Peak memory increase over the baseline</text>
+<text x="118.0" y="48.0" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#6f6f6f" text-anchor="start">VmHWM (peak resident set) read from /proc/self/status; the paper&#x27;s 3.37× is a VmPeak figure and is shown for orientation only.</text>
+<line x1="118.0" y1="62.0" x2="118.0" y2="396.0" stroke="#3d3d3d" stroke-width="1.0"/>
+<text x="118.0" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6f6f6f" text-anchor="middle">0</text>
+<line x1="312.0" y1="62.0" x2="312.0" y2="396.0" stroke="#e7e7e7" stroke-width="1.0"/>
+<text x="312.0" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6f6f6f" text-anchor="middle">1</text>
+<line x1="506.0" y1="62.0" x2="506.0" y2="396.0" stroke="#e7e7e7" stroke-width="1.0"/>
+<text x="506.0" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6f6f6f" text-anchor="middle">2</text>
+<line x1="700.0" y1="62.0" x2="700.0" y2="396.0" stroke="#e7e7e7" stroke-width="1.0"/>
+<text x="700.0" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6f6f6f" text-anchor="middle">3</text>
+<line x1="894.0" y1="62.0" x2="894.0" y2="396.0" stroke="#e7e7e7" stroke-width="1.0"/>
+<text x="894.0" y="416.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6f6f6f" text-anchor="middle">4</text>
+<line x1="118.0" y1="396.0" x2="894.0" y2="396.0" stroke="#3d3d3d" stroke-width="1.0"/>
+<text x="506.0" y="444.0" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="middle">increase (x baseline)</text>
+<line x1="771.8" y1="62.0" x2="771.8" y2="396.0" stroke="#8c8c8c" stroke-width="1.2" stroke-dasharray="6 4"/>
+<text x="108.0" y="99.4" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="end">b1_allocs</text>
+<rect x="118.0" y="84.9" width="655.6" height="21.0" fill="#2f6db5" rx="1.5"/>
+<text x="781.6" y="98.9" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">3.38×</text>
+<text x="108.0" y="166.2" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="end">b2_pointer</text>
+<rect x="118.0" y="151.7" width="356.7" height="21.0" fill="#2f6db5" rx="1.5"/>
+<text x="482.7" y="165.7" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">1.84×</text>
+<text x="108.0" y="233.0" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="end">b3_int</text>
+<rect x="118.0" y="218.5" width="396.5" height="21.0" fill="#2f6db5" rx="1.5"/>
+<text x="522.5" y="232.5" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">2.04×</text>
+<text x="108.0" y="299.8" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="end">b4_float</text>
+<rect x="118.0" y="285.3" width="481.8" height="21.0" fill="#2f6db5" rx="1.5"/>
+<text x="607.8" y="299.3" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">2.48×</text>
+<text x="108.0" y="366.6" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1f1f1f" text-anchor="end">b5_string</text>
+<rect x="118.0" y="352.1" width="291.6" height="21.0" fill="#2f6db5" rx="1.5"/>
+<text x="417.6" y="366.1" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#1f1f1f" text-anchor="start">1.50×</text>
+<rect x="616.9" y="366.0" width="277.1" height="24.0" fill="#ffffff"/>
+<line x1="616.9" y1="366.0" x2="894.0" y2="366.0" stroke="#e7e7e7" stroke-width="1.0"/>
+<rect x="624.9" y="373.0" width="12.0" height="10.0" fill="#2f6db5" rx="1.0"/>
+<text x="642.9" y="382.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#1f1f1f" text-anchor="start">peak RSS increase</text>
+<line x1="751.0" y1="378.0" x2="763.0" y2="378.0" stroke="#8c8c8c" stroke-width="1.2" stroke-dasharray="6 4"/>
+<text x="769.0" y="382.0" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#1f1f1f" text-anchor="start">paper 3.37× (VmPeak)</text>
+</svg>
