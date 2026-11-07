@@ -33,7 +33,7 @@ RUNS      ?= 3
 ASAN_FLAGS  := -fsanitize=address -fno-omit-frame-pointer -g
 ASANW_FLAGS := $(ASAN_FLAGS) -mllvm -asan-instrument-reads=0
 
-.PHONY: all build run summarize figures env clean shell doctor
+.PHONY: all build run summarize figures env clean shell doctor extension
 
 all: build run summarize figures
 
@@ -54,6 +54,13 @@ summarize:
 
 figures:
 	@python3 scripts/figures.py
+
+# Extension experiment: vary max_redzone only (report: Extension, 15%).
+# Results go to results/ext/, deliberately outside results/raw/ so the main
+# summary keeps ignoring them.
+extension: build
+	@RUNS=$(RUNS) bash scripts/extension_redzone.sh
+	@python3 scripts/summarize_extension.py
 
 env:
 	@bash scripts/env.sh > docs/environment.md
