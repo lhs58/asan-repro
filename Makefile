@@ -33,7 +33,7 @@ RUNS      ?= 3
 ASAN_FLAGS  := -fsanitize=address -fno-omit-frame-pointer -g
 ASANW_FLAGS := $(ASAN_FLAGS) -mllvm -asan-instrument-reads=0
 
-.PHONY: all build run summarize figures env clean shell doctor extension
+.PHONY: all build run summarize figures env clean shell doctor extension variance
 
 all: build run summarize figures
 
@@ -51,6 +51,10 @@ run: build
 
 summarize:
 	@python3 scripts/summarize.py
+
+# Within- vs between-session spread (report: Critical Analysis).
+variance:
+	@python3 scripts/variance.py
 
 figures:
 	@python3 scripts/figures.py
