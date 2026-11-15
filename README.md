@@ -8,7 +8,7 @@ CS340 Operating Systems — Research Paper Replication, AY 2026–27.
 | **Paper PDF** | https://www.usenix.org/system/files/conference/atc12/atc12-final39.pdf |
 | **System under test** | AddressSanitizer as shipped with LLVM/Clang (we use the packaged `clang-14` from Ubuntu 22.04). No upstream file is patched. |
 | **Our artefact** | The benchmark harness and measurement pipeline in this repository. |
-| **Repository status** | Week 3 — full 5 × 3 session at n = 3, summary tables and the first two figures; see `docs/plan.md`. |
+| **Repository status** | Week 4 — four measurement sessions, n = 13 per point, plus a within/between-session variance analysis and the first two figures; see `docs/plan.md`. |
 
 ---
 
@@ -94,17 +94,20 @@ reflecting real memory use. `vmpeak_kb` is recorded so the effect can be shown
 and explained, not so it can be compared to Table 1 directly. See the comment
 block at the top of `bench/common.h`.
 
-**Observed runtime.** The committed session (`results/raw/20261031-222633-LAPTOP-6KFUGPE5.csv`,
-45 measured runs) sums to 73.6 s of process time; adding the discarded warm-up pass
-gives ≈100 s, and compiling the 15 binaries adds the rest — `make all` takes about
-two minutes here, with the measurement dominating.
+**Observed runtime.** The committed sessions hold 270 measured runs totalling 440 s of
+process time; adding the discarded warm-up passes gives roughly 500 s, and compiling the
+15 binaries adds the rest — `make all` takes about nine minutes here, with the measurement
+dominating.
 
 ## 6. Results
 
 `make summarize` produces [`results/summary.md`](results/summary.md) with mean ± standard
 deviation over repetitions and the Paper-vs-Ours comparison; `make figures` renders the same
 data as vector figures. Everything below comes from the committed session
-`results/raw/20261031-222633-LAPTOP-6KFUGPE5.csv` (n = 3 per point), not from placeholders.
+`results/raw/` (four sessions, n = 13 per point: 3 + 5 + 5 + 5 runs), not from
+placeholders. The spread between sessions is reported separately in
+[`results/variance.md`](results/variance.md): it is smaller than the within-session noise
+for every workload, so pooling is safe and there is no drift between evenings.
 
 ![Runtime overhead per benchmark](results/figures/slowdown.svg)
 
@@ -115,23 +118,23 @@ The dashed lines mark the paper's 1.73× (all accesses) and 1.26× (write-only) 
 
 **Fig. 2** — peak-RSS increase per workload. The dashed line is the paper's 3.37× VmPeak
 figure, drawn for orientation only (see 6.2): it is a different metric. Peak RSS varies by
-at most 0.33 % between runs, so the error bars are present but barely visible — memory is
+at most 0.26 % between runs, so the error bars are present but barely visible — memory is
 almost deterministic here, unlike time.
 
 ### 6.1 Runtime overhead (paper: Figure 2, average 73 %)
 
-Session `results/raw/20261031-222633-LAPTOP-6KFUGPE5.csv`, n = 3 per point,
-warm-up discarded, baseline ≈ 0.5–1 s per run.
+Four sessions in `results/raw/`, n = 13 per point (3 + 5 + 5 + 5 runs), warm-up discarded
+in each, baseline ≈ 0.5–1 s per run.
 
 | Benchmark | Baseline (s) | ASan (s) | Slowdown | Write-only (s) | Slowdown | Closest CPU2006 analogue |
 |---|---|---|---|---|---|---|
-| `b1_allocs` — heap churn | 0.528 ± 0.011 | 5.466 ± 0.231 | 10.36× | 5.459 ± 0.209 | 10.35× | 400.perlbench (2.60×) * |
-| `b2_pointer` — pointer chasing | 0.856 ± 0.132 | 1.117 ± 0.172 | 1.30× | 1.134 ± 0.271 | 1.32× | 429.mcf |
-| `b3_int` — byte-wise hashing | 0.948 ± 0.043 | 0.991 ± 0.042 | 1.05× | 0.950 ± 0.066 | 1.00× | 401.bzip2 |
-| `b4_float` — FP arrays | 0.768 ± 0.035 | 2.078 ± 0.078 | 2.70× | 1.010 ± 0.043 | 1.31× | 470.lbm * |
-| `b5_string` — token scanning | 1.009 ± 0.051 | 1.251 ± 0.039 | 1.24× | 0.985 ± 0.036 | 0.98× | 483.xalancbmk (2.67×) |
-| **Mean, all five** | | | **3.33× (+233 %)** | | **2.99× (+199 %)** | paper: 1.73× / 1.26× |
-| **Mean, b2–b5 only** | | | **1.57× (+57 %)** | | **1.15× (+15 %)** | paper: 1.73× / 1.26× |
+| `b1_allocs` — heap churn | 0.524 ± 0.010 | 5.458 ± 0.098 | 10.41× | 5.423 ± 0.092 | 10.34× | 400.perlbench (2.60×) * |
+| `b2_pointer` — pointer chasing | 0.861 ± 0.093 | 1.125 ± 0.132 | 1.31× | 1.067 ± 0.132 | 1.24× | 429.mcf |
+| `b3_int` — byte-wise hashing | 0.929 ± 0.030 | 0.981 ± 0.028 | 1.06× | 0.928 ± 0.037 | 1.00× | 401.bzip2 |
+| `b4_float` — FP arrays | 0.815 ± 0.100 | 2.089 ± 0.033 | 2.56× | 1.027 ± 0.032 | 1.26× | 470.lbm * |
+| `b5_string` — token scanning | 0.986 ± 0.025 | 1.263 ± 0.022 | 1.28× | 0.979 ± 0.018 | 0.99× | 483.xalancbmk (2.67×) |
+| **Mean, all five** | | | **3.32× (+232 %)** | | **2.97× (+197 %)** | paper: 1.73× / 1.26× |
+| **Mean, b2–b5 only** | | | **1.55× (+55 %)** | | **1.12× (+12 %)** | paper: 1.73× / 1.26× |
 
 `*` Not a valid proxy — see the notes below. `b1_allocs` performs almost no work
 besides `malloc`/`free`, so its ratio is an **upper bound on allocator overhead**,
@@ -146,7 +149,7 @@ much the second one depends on that exclusion.
 | `b1_allocs` | 2.0 | 6.9 | 3.38× | 20 971 560 |
 | `b2_pointer` | 10.9 | 20.1 | 1.84× | 20 971 560 |
 | `b3_int` | 2.8 | 5.7 | 2.04× | 20 971 561 |
-| `b4_float` | 1.9 | 4.8 | 2.48× | 20 971 560 |
+| `b4_float` | 1.9 | 4.8 | 2.49× | 20 971 560 |
 | `b5_string` | 5.8 | 8.7 | 1.50× | 20 971 564 |
 | **Mean** | | | **2.25×** (paper: 3.37×) | — |
 
