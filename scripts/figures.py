@@ -3,15 +3,26 @@
 
     results/figures/slowdown.svg / .pdf   Fig. 1  runtime overhead per benchmark
     results/figures/memory.svg   / .pdf   Fig. 2  peak-RSS increase per benchmark
+    results/figures/optlevel.svg / .pdf   Fig. 3  slowdown at -O0..-O3 (extension)
 
-Both formats are vector. The PDF is what the report embeds; the SVG is what
+Every figure is also written as a 300 dpi PNG (same name, .png) for the slides:
+PowerPoint renders inserted SVG unreliably and does not accept the PDF at all.
+
+SVG and PDF are vector. The PDF is what the report embeds; the SVG is what
 GitHub renders inline in README section 6, so the weekly check can see the
 figure without downloading anything.
 
+Fig. 3 is drawn only when results/ext/opt-*.csv exists (`make extension-opt`);
+without it the script prints a note and draws Fig. 1 and Fig. 2 as before.
+
 The pinned container installs python3 and no plotting library (see Dockerfile),
-so this script is standard library only and draws both formats by hand. Output
-is deterministic: same summary.csv in, byte-identical files out, so a re-run
-never produces a noisy diff.
+so SVG and PDF are drawn by hand with the standard library. The PNG needs a
+rasteriser, so it is the one exception: it uses Pillow (python3-pil) and the
+Liberation Sans font (fonts-liberation), which has the same advance widths as
+Helvetica, so text lands where the hand-made layout expects it. If either is
+missing, the PNGs are skipped with a warning and SVG/PDF are still written.
+Output is deterministic: same input in, byte-identical files out (the PNGs
+carry no timestamp), so a re-run never produces a noisy diff.
 
 Error bars in Fig. 1 are propagated from the per-mode standard deviations that
 scripts/summarize.py records:
@@ -29,7 +40,9 @@ two nearby values (b1: 10.36x vs 10.35x) can never collide.
 from __future__ import annotations
 
 import csv
+import glob
 import math
+import statistics
 import sys
 from html import escape
 from pathlib import Path
@@ -37,6 +50,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SUMMARY = ROOT / "results" / "summary.csv"
 OUTDIR = ROOT / "results" / "figures"
+OPT_GLOB = str(ROOT / "results" / "ext" / "opt-*.csv")
 
 # Paper reference values, each tied to the claim it supports (docs/claims.md).
 PAPER_ASAN = 1.73  # Fig. 2, average 73 % slowdown
@@ -54,6 +68,15 @@ C_TEXT = "#1f1f1f"
 C_MUTED = "#6f6f6f"
 C_REF = "#8c8c8c"
 C_ERR = "#2b2b2b"
+# Fig. 3: one ordered blue ramp, light (-O0) to dark (-O3), so the level order
+# reads without the legend. The lightest step still clears 2:1 on white.
+C_LEVELS = ["#86b6ef", "#3987e5", "#1c5cab", "#0d366b"]
+
+PNG_DPI = 300
+FONT_FILES = {
+    False: "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+    True: "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+}
 
 FONT = "Helvetica, Arial, sans-serif"
 
@@ -213,6 +236,62 @@ def to_pdf(canvas: Canvas, path: Path, title: str) -> None:
     path.write_bytes(bytes(out))
 
 
+def to_png(canvas: Canvas, path: Path) -> bool:
+    """Rasterise the canvas at PNG_DPI. Canvas units are PDF points (1/72 in).
+
+    Returns False (and writes nothing) when Pillow or the font is unavailable.
+    """
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError:
+        return False
+    if not all(Path(f).is_file() for f in FONT_FILES.values()):
+        return False
+
+    k = PNG_DPI / 72.0
+    img = Image.new("RGB", (round(W * k), round(H * k)), "#ffffff")
+    draw = ImageDraw.Draw(img)
+    fonts: dict = {}
+
+    def font(size: float, bold: bool):
+        if (size, bold) not in fonts:
+            fonts[(size, bold)] = ImageFont.truetype(FONT_FILES[bold], round(size * k))
+        return fonts[(size, bold)]
+
+    for item in canvas.items:
+        kind = item[0]
+        if kind == "rect":
+            _, x, y, w, h, fill, rx = item
+            box = (round(x * k), round(y * k),
+                   round((x + w) * k) - 1, round((y + h) * k) - 1)
+            if rx:
+                draw.rounded_rectangle(box, radius=round(rx * k), fill=fill)
+            else:
+                draw.rectangle(box, fill=fill)
+        elif kind == "line":
+            _, x1, y1, x2, y2, colour, width, dash = item
+            lw = max(1, round(width * k))
+            if not dash:
+                draw.line((x1 * k, y1 * k, x2 * k, y2 * k), fill=colour, width=lw)
+                continue
+            on, off = (float(v) for v in dash.split())
+            length = math.hypot(x2 - x1, y2 - y1)
+            ux, uy = (x2 - x1) / length, (y2 - y1) / length
+            t = 0.0
+            while t < length:
+                e = min(t + on, length)
+                draw.line(((x1 + ux * t) * k, (y1 + uy * t) * k,
+                           (x1 + ux * e) * k, (y1 + uy * e) * k), fill=colour, width=lw)
+                t += on + off
+        else:
+            _, x, y, s, size, colour, anchor, bold = item
+            a = {"start": "ls", "middle": "ms", "end": "rs"}[anchor]
+            draw.text((x * k, y * k), s, fill=colour, font=font(size, bold), anchor=a)
+
+    img.save(path, format="PNG", dpi=(PNG_DPI, PNG_DPI))
+    return True
+
+
 def load_rows(path: Path) -> list[dict[str, str]]:
     if not path.is_file():
         sys.exit(f"figures: {path} not found - run 'make run' and 'make summarize' first")
@@ -300,8 +379,8 @@ def plot(rows: list[dict[str, str]],
     n = len(rows)
     band = plot_h / n
     k = len(series)
-    bar_h = min(21.0, band * 0.34)
     gap = 3.0
+    bar_h = min(21.0, band * 0.34, (band * 0.84 - (k - 1) * gap) / k)
     total = k * bar_h + (k - 1) * gap
 
     for i, row in enumerate(rows):
@@ -345,6 +424,35 @@ def plot(rows: list[dict[str, str]],
         lx += wd
 
     return canvas
+
+
+def load_opt_rows() -> tuple[list[dict[str, str]], int]:
+    """Per-benchmark slowdown at each level, from results/ext/opt-*.csv.
+
+    Returns ([], 0) when the extension has not been run. Columns produced:
+    bench, slowdown_O<n>, slowdown_O<n>_sd for n in 0..3.
+    """
+    files = sorted(glob.glob(OPT_GLOB))
+    if not files:
+        return [], 0
+    wall: dict[tuple[str, str, str], list[float]] = {}
+    for path in files:
+        with open(path, newline="", encoding="utf-8") as fh:
+            for r in csv.DictReader(fh):
+                wall.setdefault((r["bench"], r["level"], r["mode"]), []).append(
+                    float(r["wall_s"]))
+    n = min(len(v) for v in wall.values())
+    rows = []
+    for b in sorted({b for b, _l, _m in wall}):
+        row = {"bench": b}
+        for lv in ("O0", "O1", "O2", "O3"):
+            base, asan = wall[(b, lv, "base")], wall[(b, lv, "asan")]
+            mb, ma = statistics.mean(base), statistics.mean(asan)
+            row[f"slowdown_{lv}"] = str(ma / mb)
+            row[f"slowdown_{lv}_sd"] = str(
+                ratio_sd(ma, statistics.stdev(asan), mb, statistics.stdev(base)))
+        rows.append(row)
+    return rows, n
 
 
 def main() -> None:
@@ -418,11 +526,38 @@ def main() -> None:
         ),
     ]
 
+    opt_rows, opt_n = load_opt_rows()
+    if opt_rows:
+        figures.append((
+            plot(
+                opt_rows,
+                [(f"slowdown_O{i}", f"slowdown_O{i}_sd", C_LEVELS[i], f"-O{i}")
+                 for i in range(4)],
+                [(PAPER_ASAN, f"paper {PAPER_ASAN:.2f}\u00d7 (-O2)")],
+                "ASan slowdown at each optimisation level",
+                f"Baseline and ASan built at the same level; n = {opt_n} runs after one "
+                "discarded warm-up, one session (D20). Whiskers: propagated sd.",
+                "slowdown (x baseline at the same level)",
+            ),
+            "optlevel",
+            "AddressSanitizer slowdown at -O0, -O1, -O2 and -O3",
+        ))
+    else:
+        print("no results/ext/opt-*.csv - skipping Fig. 3 (run 'make extension-opt')",
+              file=sys.stderr)
+
     OUTDIR.mkdir(parents=True, exist_ok=True)
+    png_ok = True
     for canvas, name, title in figures:
         to_svg(canvas, OUTDIR / f"{name}.svg", title)
         to_pdf(canvas, OUTDIR / f"{name}.pdf", title)
-        print(f"wrote results/figures/{name}.svg and .pdf", file=sys.stderr)
+        if png_ok:
+            png_ok = to_png(canvas, OUTDIR / f"{name}.png")
+        exts = ".svg, .pdf and .png" if png_ok else ".svg and .pdf"
+        print(f"wrote results/figures/{name}{exts}", file=sys.stderr)
+    if not png_ok:
+        print("warning: PNGs skipped - install python3-pil and fonts-liberation",
+              file=sys.stderr)
 
 
 if __name__ == "__main__":
