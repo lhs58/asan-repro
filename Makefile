@@ -4,6 +4,7 @@
 #   make run         1 warm-up + RUNS measured repetitions -> results/raw/*.csv
 #   make summarize   aggregate raw CSV -> results/summary.md
 #   make figures     summary.csv -> results/figures/*.svg and *.pdf
+#   make extension-opt  -O0..-O3 sweep, base vs asan -> results/ext/opt-*.csv
 #   make env         record toolchain/OS/CPU -> docs/environment.md
 #   make all         build + run + summarize + figures
 #   make clean
@@ -33,7 +34,7 @@ RUNS      ?= 3
 ASAN_FLAGS  := -fsanitize=address -fno-omit-frame-pointer -g
 ASANW_FLAGS := $(ASAN_FLAGS) -mllvm -asan-instrument-reads=0
 
-.PHONY: all build run summarize figures env clean shell doctor extension variance
+.PHONY: all build run summarize figures env clean shell doctor extension variance \n        extension-opt build-opt
 
 all: build run summarize figures
 
@@ -65,6 +66,28 @@ figures:
 extension: build
 	@RUNS=$(RUNS) bash scripts/extension_redzone.sh
 	@python3 scripts/summarize_extension.py
+
+# Extension experiment: optimisation-level sweep (-O0..-O3), base vs asan.
+# The paper measured at -O2 only. Each level gets its own build directory so
+# the -O2 binaries used by the main measurement are never overwritten.
+# Results go to results/ext/, never results/raw/.
+OPT_LEVELS := 0 1 2 3
+# BASE_FLAGS minus its -O2, so the level under test is the only -O flag.
+OPT_BASE_FLAGS = $(filter-out $(OPT),$(BASE_FLAGS))
+
+build-opt:
+	@for n in $(OPT_LEVELS); do \
+	  mkdir -p $(BUILD)/base-O$$n $(BUILD)/asan-O$$n; \
+	  for b in $(BENCHES); do \
+	    echo "  CC  base-O$$n/$$b"; $(CC) $(OPT_BASE_FLAGS) -O$$n -o $(BUILD)/base-O$$n/$$b bench/$$b.c $(LDLIBS) || exit 1; \
+	    echo "  CC  asan-O$$n/$$b"; $(CC) $(OPT_BASE_FLAGS) -O$$n $(ASAN_FLAGS) -o $(BUILD)/asan-O$$n/$$b bench/$$b.c $(LDLIBS) || exit 1; \
+	  done; \
+	done
+	@echo "built into $(BUILD)/{base,asan}-O{0,1,2,3}/"
+
+extension-opt: build-opt
+	@RUNS=5 bash scripts/extension_opt.sh
+	@python3 scripts/summarize_opt.py
 
 env:
 	@bash scripts/env.sh > docs/environment.md
