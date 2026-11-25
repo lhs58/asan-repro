@@ -117,3 +117,42 @@ the benchmarks (no WSL/Docker/clang on the machine it was given), so it wrote no
   `results/raw/`. Nothing was extrapolated, but a second pair of eyes on the tables is cheap.
 - `v1.0` was tagged from the web UI when the commit landed.
 
+
+# 2026-11-25 (second pass) — Week 6: the deck, and a bug in the generator
+
+Same session, after the report landed. Scope: the presentation the course requires for 2026-12-01,
+and anything else still inconsistent in the repository.
+
+## What the AI produced
+
+| File | What |
+|---|---|
+| `presentation/slides.pptx` | 12 slides — 8 numbered (`n / 8`) plus backup `B1`–`B4`; authored as SVG pages and compiled, then exported |
+| `presentation/slides.pdf` | the same 12 pages, for a machine without PowerPoint |
+| `presentation/notes-zhangqixun.md` | word-for-word script for slides 3–4 (75 s) and ten prepared Q&A answers |
+| `scripts/summarize.py` | corrected the `b4_float` workload note (the "de-vectorisation" sentence was still being generated) |
+| `results/summary.md` | regenerated from the fixed generator — one sentence changed |
+
+## Analysis decisions the AI made on its own
+
+- **Fixed the generator rather than the output.** The committed `results/summary.md` still carried
+  the de-vectorisation explanation that D20 refutes, and `scripts/summarize.py` would have written it
+  again on the next `make summarize`. The AI changed the note at its source and regenerated.
+- **Used the regeneration as a reproducibility check.** `results/summary.csv` came back
+  byte-identical; `results/summary.md` differed in exactly the corrected sentence. That is now the
+  evidence that every committed summary number follows from the committed raw CSVs — it cost one
+  command and no new measurement.
+- **Chose the deck's structure from the outline, not from the report.** The deck keeps the outline's
+  eight slides, speaker split and the "every number traced to a file" rule; it adds nothing that is
+  not already in `results/` or `docs/deviations.md`.
+- **Wrote speaker notes only for slides 3–4.** Those are Zhang Qixun's own slot; a full script for
+  four speakers would be the group's writing, not his.
+
+## Known gaps, stated rather than hidden
+
+- The talk was not rehearsed and not timed by the AI; the 0:40 / 0:35 split is the outline's
+  estimate over a 5-minute budget, not a stopwatch result.
+- The deck was not checked against a course slide template — the course requires PPT or PDF, numbered
+  slides and English, all of which are satisfied.
+- `make all` still has not been re-executed anywhere by the AI (no container on this machine); the
+  claim in `docs/reproducibility-check.md` stands as the one thing a human should run.
