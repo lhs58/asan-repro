@@ -9,6 +9,11 @@ Every number on a slide must be copied from the file named in its *Source*
 line, never retyped from memory. Figures: use the PNGs in `results/figures/`
 (PowerPoint does not take the PDFs and renders SVG unreliably).
 
+**Deck:** `presentation/slides.pptx` — 12 slides (8 numbered, footers `n / 8`,
+plus `B1`–`B4`), exported from the same content as this outline; `slides.pdf`
+is the same pages for a machine without PowerPoint. Speaker script and prepared
+Q&A answers for slides 3–4: `presentation/notes-zhangqixun.md`.
+
 ## Timing
 
 | # | Slide | Speaker | Time | Section |
@@ -63,7 +68,7 @@ line, never retyped from memory. Figures: use the PNGs in `results/figures/`
 ## 4 / 8 — Making the measurement trustworthy · Zhang Qixun · 0:35
 
 - Without ASLR disabled, 11 of 40 ASan runs (27.5 %) crashed silently → every run under `setarch -R`
-- n = 13 per point across four separate sessions; between-session drift < within-session noise
+- n = 18 per point across four separate sessions (3 + 5 + 5 + 5 runs); between-session drift stays below within-session noise
 - `make doctor`: all four bug classes detected; checksums identical across all builds
 
 *Source:* `docs/deviations.md` D14, D19; `results/variance.md`; `scripts/sanity_bug_check.sh`.
