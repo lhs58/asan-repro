@@ -71,3 +71,49 @@ they go into the report:
 - Installed WSL with administrator rights and rebooted.
 - **To do before the report:** read the generated files and check the numbers,
   then replace "not changed" above with what I actually revised.
+
+---
+
+# 2026-11-25 — Week 6: report draft (Zhang Qixun session)
+
+The brief for this session was literally "log into GitHub and finish the homework in the repo", with
+no specification of which files. The AI read `docs/plan.md` (Week 6 = submission-ready), found that
+`docs/report.md` did not exist, that §9/§10 of the README were placeholders, and that no tag existed,
+and worked from that. Tool: an AI coding agent with shell and browser access; it could **not** run
+the benchmarks (no WSL/Docker/clang on the machine it was given), so it wrote no measurements.
+
+| File | What | Changed by a human afterwards? |
+|---|---|---|
+| `docs/report.md` | whole file: abstract, claims, method, C1–C3 with tables, discrepancy analysis, extension, threats to validity, conclusion, contribution and AI statements | not yet — needs a read-through by the group (see "To check") |
+| `README.md` §status, §1, §6.1 note, §6.1/§6.2 text, §9, §10 | status line; `n = 13 → 18`; replaced the "de-vectorisation" note with the D20-correct read-side explanation; both statements | not yet |
+| `docs/deviations.md` D19 | `n = 13 → 18` | not yet |
+| `docs/contributions/{lhs58,jeff-feng-dot,QISIHAO,zhangqixun6904}.md` | filled from `git log`, added the missing `lhs58.md` | not yet |
+| `docs/ai-log.md` | this section | n/a |
+
+### Analysis decisions the AI made on its own
+
+- **The `n = 13 → 18` correction.** README (three places) and D19 said `n = 13` for a "3 + 5 + 5 + 5"
+  breakdown, which is arithmetic that does not add up. The AI counted the rows in `results/raw/`
+  (45 + 75 + 75 + 75 = 270; ÷ 15 points = 18) and changed the documentation to 18. This is a
+  documentation fix, not a re-analysis: `results/summary.md` already said 18.
+- **The contribution table.** The AI wrote it from `git log --diff-filter=A` per file rather than
+  from the roles in `plan.md`, because the two disagree: the plan's Role B (workloads) and Role C
+  (measurement) were both in fact done by Li Haisheng in the initial scaffold, and Zhang Qixun's
+  only prior commit touched `docs/contributions/zhangqixun6904.md`. The table as written is what the
+  history supports; it under-sells the "statistics and figures" line in Zhang Qixun's own
+  contribution file, which predates any commit that would justify it.
+- **Both means (3.32× and 1.55×) are reported** in the report rather than only the flattering one,
+  following the existing D15 note.
+- **The `b4_float` explanation** in the report follows D20 (reads dominate, vectorisation refuted)
+  and additionally uses the 2.56× vs 1.26× read/write split as the positive evidence.
+
+### To check before submission
+
+- The report says `make all` takes about nine minutes and that re-running `make summarize` reproduces
+  `results/summary.md`; the AI did **not** re-execute either (no container on its machine). Someone
+  with the WSL2 setup should run the Week-6 reproducibility check in `docs/plan.md` for real.
+- Every number in the report was read from `results/summary.md`, `results/variance.md`,
+  `results/ext/opt-summary.md` and `results/ext/summary.md`, and the row counts were checked against
+  `results/raw/`. Nothing was extrapolated, but a second pair of eyes on the tables is cheap.
+- `v1.0` was tagged from the web UI when the commit landed.
+
