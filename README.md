@@ -177,8 +177,9 @@ discrepancy analysis, not a defect to hide.
 ```
 bench/        five C benchmarks + shared timing/measurement header
 scripts/      build/run/summarize/figures/env helpers, commit-msg hook installer
-docs/         claims, deviations, environment record, six-week plan
+docs/         claims, deviations, environment record, six-week plan, report
 results/      raw per-run CSV (committed — the evidence trail), summary, figures
+presentation/ slides.pptx (12 slides, numbered), slides.pdf, outline, speaker notes
 Dockerfile    pinned toolchain
 Makefile      build / run / summarize / figures / env / clean
 ```
@@ -201,7 +202,7 @@ The split below matches the commits: each member's weekly commit carries their s
 | Li Haisheng | 1240009615 | @lhs58 | Repository scaffold, pinned toolchain and `Makefile`, all five benchmark programs and the bug-detection check, the measurement pipeline (`run.sh`, `summarize.py`, `variance.py`), all four measurement sessions, `claims.md`/`deviations.md`/`plan.md`, integration and release |
 | Pan Haodong | 1240010383 | @Jeff-feng-dot | Week-5 extension (`-O` sweep: `extension_opt.sh`, `summarize_opt.py`, summary), PNG/PDF figure backend, Fig. 3, presentation outline, AI-usage log, D20 |
 | Qi Sihao | 1240012742 | @QISIHAO | `scripts/figures.py` and the `make figures` target, Figs. 1–2 rendering and the README's figure documentation |
-| Zhang Qixun | 1240006904 | @zhangqixun6904 | Week 6: documentation consistency pass (the `n = 13 → 18` correction, the refuted de-vectorisation note), `docs/report.md` and both required statements |
+| Zhang Qixun | 1240006904 | @zhangqixun6904 | Week 6: documentation consistency pass (the `n = 13 → 18` correction, the refuted de-vectorisation note in `summarize.py` and the generated summary), `docs/report.md` and both required statements, the 12-slide deck (`presentation/slides.pptx`, `.pdf`), the speaker notes and prepared Q&A for slides 3–4 |
 
 ## 10. AI usage statement
 
@@ -218,6 +219,11 @@ Stated plainly, because the course requires it and because it is the honest acco
    updates were drafted by an AI assistant in Zhang Qixun's session on 2026-11-25. Every number in
    them is taken from the committed files in `results/` and re-checked against `results/raw/`; no
    value was invented.
+5. The same session produced `presentation/slides.pptx` and `slides.pdf` (12 slides), the speaker
+   notes in `presentation/notes-zhangqixun.md`, and the fix to the `b4_float` note in
+   `scripts/summarize.py`; the regenerated files were diffed against the committed ones —
+   `results/summary.csv` came back byte-identical, `results/summary.md` changed only in that one
+   sentence. Logged in `docs/ai-log.md`.
 
 No measurement run, no choice of experimental design, no `ASAN_OPTIONS` value and no reported number
 was produced by an AI system: the AI wrote prose around data the group had already committed.
