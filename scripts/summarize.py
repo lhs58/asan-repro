@@ -59,10 +59,13 @@ WORKLOAD_NOTE = {
     ),
     "b3_int": "byte-at-a-time hashing; isolates 1-byte access instrumentation.",
     "b4_float": (
-        "dense double-precision arrays. The measured ratio is dominated by "
-        "*de-vectorisation* (instrumented loops cannot be vectorised), not by "
-        "shadow checks, so it is not a clean test of the paper's claim that "
-        "floating-point code pays the least."
+        "dense double-precision arrays, three loads and one store per "
+        "iteration. The ratio is set by the *read-side* shadow checks, not by "
+        "de-vectorisation: the hot loop is not vectorised in either -O2 build, "
+        "and the cost is already in place at -O1, where nothing is vectorised "
+        "(docs/deviations.md D20 overturns D16). Measured write-only the same "
+        "workload costs ~1.26x, so it is not a clean test of the paper's claim "
+        "that floating-point code pays the least."
     ),
     "b5_string": "byte-wise token scan; the closest analogue to the paper's text-processing cases.",
 }
