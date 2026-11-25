@@ -8,7 +8,7 @@ CS340 Operating Systems — Research Paper Replication, AY 2026–27.
 | **Paper PDF** | https://www.usenix.org/system/files/conference/atc12/atc12-final39.pdf |
 | **System under test** | AddressSanitizer as shipped with LLVM/Clang (we use the packaged `clang-14` from Ubuntu 22.04). No upstream file is patched. |
 | **Our artefact** | The benchmark harness and measurement pipeline in this repository. |
-| **Repository status** | Week 4 — four measurement sessions, n = 13 per point, plus a within/between-session variance analysis and the first two figures; see `docs/plan.md`. |
+| **Repository status** | Week 6 — submission-ready (tag `v1.0`): the full report is in [`docs/report.md`](docs/report.md), measurement data are four sessions at n = 18 per point, plus the variance analysis, the week-5 `-O` extension and the redzone check; see `docs/plan.md`. |
 
 ---
 
@@ -21,7 +21,8 @@ those numbers on hardware and a toolchain that did not exist in 2012, and asks w
 claims still hold.
 
 Claims are enumerated in [`docs/claims.md`](docs/claims.md); every deviation from the paper's
-setup is logged in [`docs/deviations.md`](docs/deviations.md).
+setup is logged in [`docs/deviations.md`](docs/deviations.md). The written analysis — results,
+discrepancy analysis, extension and conclusion — is [`docs/report.md`](docs/report.md).
 
 ## 2. Quick start (container)
 
@@ -104,7 +105,7 @@ dominating.
 `make summarize` produces [`results/summary.md`](results/summary.md) with mean ± standard
 deviation over repetitions and the Paper-vs-Ours comparison; `make figures` renders the same
 data as vector figures. Everything below comes from the committed session
-`results/raw/` (four sessions, n = 13 per point: 3 + 5 + 5 + 5 runs), not from
+`results/raw/` (four sessions, n = 18 per point: 3 + 5 + 5 + 5 runs), not from
 placeholders. The spread between sessions is reported separately in
 [`results/variance.md`](results/variance.md): it is smaller than the within-session noise
 for every workload, so pooling is safe and there is no drift between evenings.
@@ -123,8 +124,8 @@ almost deterministic here, unlike time.
 
 ### 6.1 Runtime overhead (paper: Figure 2, average 73 %)
 
-Four sessions in `results/raw/`, n = 13 per point (3 + 5 + 5 + 5 runs), warm-up discarded
-in each, baseline ≈ 0.5–1 s per run.
+Four sessions in `results/raw/`, n = 18 per point (3 + 5 + 5 + 5 runs), warm-up discarded
+in each, baseline ≈ 0.5–1 s per run. 270 measured rows in total.
 
 | Benchmark | Baseline (s) | ASan (s) | Slowdown | Write-only (s) | Slowdown | Closest CPU2006 analogue |
 |---|---|---|---|---|---|---|
@@ -138,9 +139,11 @@ in each, baseline ≈ 0.5–1 s per run.
 
 `*` Not a valid proxy — see the notes below. `b1_allocs` performs almost no work
 besides `malloc`/`free`, so its ratio is an **upper bound on allocator overhead**,
-not a replication of perlbench. `b4_float` is dominated by de-vectorisation
-rather than by shadow checks. Both means are reported so the reader can see how
-much the second one depends on that exclusion.
+not a replication of perlbench. `b4_float`'s cost sits on the load side
+(2.56× with read checks versus 1.26× without); the de-vectorisation explanation
+was tested and **rejected** — the loop is not vectorised in either build, and the
+cost is already 2.54× at `-O1` (D16 → D20). Both means are reported so the reader
+can see how much the second one depends on the `b1_allocs` exclusion.
 
 ### 6.2 Memory overhead (paper: Table 1, average 3.37× — but see the caveat)
 
@@ -190,23 +193,31 @@ Makefile      build / run / summarize / figures / env / clean
 
 ## 9. Contribution statement
 
-> Replace with the real split before submission; it must match the commits.
+The split below matches the commits: each member's weekly commit carries their student ID, and
+`git log --format='%an %s'` is the audit trail. Per-member detail is in `docs/contributions/`.
 
 | Member | Student ID | GitHub | Contribution |
 |---|---|---|---|
-| TBD | TBD | TBD | environment, container, build system |
-| TBD | TBD | TBD | benchmarks and bug-detection sanity checks |
-| TBD | TBD | TBD | measurement runs, statistics, figures |
-| TBD | TBD | TBD | report, deviations log, presentation |
+| Li Haisheng | 1240009615 | @lhs58 | Repository scaffold, pinned toolchain and `Makefile`, all five benchmark programs and the bug-detection check, the measurement pipeline (`run.sh`, `summarize.py`, `variance.py`), all four measurement sessions, `claims.md`/`deviations.md`/`plan.md`, integration and release |
+| Pan Haodong | 1240010383 | @Jeff-feng-dot | Week-5 extension (`-O` sweep: `extension_opt.sh`, `summarize_opt.py`, summary), PNG/PDF figure backend, Fig. 3, presentation outline, AI-usage log, D20 |
+| Qi Sihao | 1240012742 | @QISIHAO | `scripts/figures.py` and the `make figures` target, Figs. 1–2 rendering and the README's figure documentation |
+| Zhang Qixun | 1240006904 | @zhangqixun6904 | Week 6: documentation consistency pass (the `n = 13 → 18` correction, the refuted de-vectorisation note), `docs/report.md` and both required statements |
 
 ## 10. AI usage statement
 
-> Fill in truthfully and specifically. Draft skeleton — adjust to what actually happened:
+Stated plainly, because the course requires it and because it is the honest account:
 
-AI assistants were used for: (a) locating the paper and its key figures, (b) drafting the
-initial repository skeleton (`make` targets, scripts, benchmark programs) and (c) explaining
-AddressSanitizer's shadow-memory design during the reading phase. All experimental design
-decisions, the choice of `ASAN_OPTIONS`, every measurement run, the statistical analysis and
-all conclusions were carried out and verified by the group; the benchmark programs were
-reviewed and modified by the group before use. No results in this report were generated by an
-AI system.
+1. The initial scaffold — `Makefile` targets, script skeletons, first versions of the benchmark
+   programs — was AI-generated and then reviewed, adapted and corrected by the group.
+2. AI was used during the reading phase to explain ASan's shadow-memory design.
+3. The week-5 extension (`scripts/extension_opt.sh`, `scripts/summarize_opt.py`, the figures' PNG/PDF
+   backend, `presentation/outline.md`, deviation D20) was written by an AI assistant at Pan
+   Haodong's direction, and the assistant also made the change of verdict on hypothesis (b). All of
+   this is logged verbatim in `docs/ai-log.md`.
+4. The first draft of `docs/report.md`, this section and §9 above, and the `docs/contributions/`
+   updates were drafted by an AI assistant in Zhang Qixun's session on 2026-11-25. Every number in
+   them is taken from the committed files in `results/` and re-checked against `results/raw/`; no
+   value was invented.
+
+No measurement run, no choice of experimental design, no `ASAN_OPTIONS` value and no reported number
+was produced by an AI system: the AI wrote prose around data the group had already committed.
